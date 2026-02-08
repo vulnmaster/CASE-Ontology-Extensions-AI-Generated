@@ -53,6 +53,19 @@ Autopsy-Rust does **not** assert account-to-human ownership within its CASE/UCO 
 | `constraintQuery` | Datatype | `SearchConstraint` | `xsd:string` | Query/pattern used |
 | `constraintConfiguration` | Datatype | `SearchConstraint` | `xsd:string` | Tool/module configuration |
 
+## Connection to Autopsy-Rust Artifact Types
+
+Several Autopsy-Rust artifact types map naturally to the investigation extension concepts:
+
+| Autopsy-Rust Artifact | Maps to | Notes |
+|-----------------------|---------|-------|
+| `AnalysisResult` | `investigation_ai_ext:Finding` | Module analysis outcomes can be wrapped as Findings with polarity |
+| `VerificationFailed` | `investigation_ai_ext:NegativeFinding` | Data integrity failures are negative findings documenting what was checked and failed |
+| `InterestingFileHit` / `InterestingArtifactHit` | `investigation_ai_ext:Finding` (via `producedFinding`) | Rule-based matches can be linked to the action that produced them |
+| Keyword search results | `investigation_ai_ext:SearchConstraint` + `Finding` | Search queries, time windows, and data source scope are captured as constraints |
+
+The `producedFinding` property (subPropertyOf `uco-action:result`) links `InvestigativeAction` nodes to their `Finding` outputs. The UCO `action-ai-ext` vocabulary terms (see the [UCO Extensions](https://github.com/vulnmaster/Unifed-Cyber-Ontology-Extensions-AI-Generated) repository) define the specific action types whose results can flow into Findings.
+
 ## Compatibility
 
 - **Base ontology:** CASE v1.4.0 / UCO v1.4.0
