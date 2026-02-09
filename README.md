@@ -59,12 +59,14 @@ Several Autopsy-Rust artifact types map naturally to the investigation extension
 
 | Autopsy-Rust Artifact | Maps to | Notes |
 |-----------------------|---------|-------|
-| `AnalysisResult` | `investigation_ai_ext:Finding` | Module analysis outcomes can be wrapped as Findings with polarity |
+| `AnalysisResult` | `investigation_ai_ext:Finding` | Module analysis outcomes can be wrapped as Findings with polarity. From **Plaso** (TimelineEvent), **Malware Scan** (MalwareHitFacet), **Object Detection** (ObjectDetectionFacet), **Central Repo**, etc. |
 | `VerificationFailed` | `investigation_ai_ext:NegativeFinding` | Data integrity failures are negative findings documenting what was checked and failed |
 | `InterestingFileHit` / `InterestingArtifactHit` | `investigation_ai_ext:Finding` (via `producedFinding`) | Rule-based matches can be linked to the action that produced them |
 | Keyword search results | `investigation_ai_ext:SearchConstraint` + `Finding` | Search queries, time windows, and data source scope are captured as constraints |
+| **TimelineEvent** (Plaso) | Observable with `observable_ai_ext:TimelineEventFacet`; action → `producedFinding` | Timeline events can be linked to the Plaso InvestigativeAction as results/findings |
+| **AnalysisResult** (Malware Scan, Object Detection) | Observable with `MalwareHitFacet` / `ObjectDetectionFacet` (UCO); action → `producedFinding` | Module-specific facets in UCO; the producing action is typed (e.g. Malware Scanning, Object Detection) in `action_ai_ext` |
 
-The `producedFinding` property (subPropertyOf `uco-action:result`) links `InvestigativeAction` nodes to their `Finding` outputs. The UCO `action-ai-ext` vocabulary terms (see the [UCO Extensions](https://github.com/vulnmaster/Unifed-Cyber-Ontology-Extensions-AI-Generated) repository) define the specific action types whose results can flow into Findings.
+The `producedFinding` property (subPropertyOf `uco-action:result`) links `InvestigativeAction` nodes to their `Finding` outputs. The UCO `action-ai-ext` vocabulary terms (see the [UCO Extensions](https://github.com/vulnmaster/Unifed-Cyber-Ontology-Extensions-AI-Generated) repository) define the specific action types whose results can flow into Findings (e.g. `PlasoTimelineExtraction`, `MalwareScanning`, `ObjectDetection`, `iOSArtifactExtraction`).
 
 ## Compatibility
 
