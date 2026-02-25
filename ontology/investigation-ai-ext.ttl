@@ -1,0 +1,185 @@
+# imports: https://ontology.caseontology.org/case/investigation/1.4.0
+# imports: https://ontology.unifiedcyberontology.org/uco/action/1.4.0
+# imports: https://ontology.unifiedcyberontology.org/uco/core/1.4.0
+
+@prefix investigation_ai_ext: <https://ontology.caseontology.org/case/investigation-ai-ext/> .
+@prefix investigation: <https://ontology.caseontology.org/case/investigation/> .
+@prefix uco-action: <https://ontology.unifiedcyberontology.org/uco/action/> .
+@prefix uco-core: <https://ontology.unifiedcyberontology.org/uco/core/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://ontology.caseontology.org/case/investigation-ai-ext>
+	a owl:Ontology ;
+	rdfs:label "CASE Investigation AI Extensions (AI-Generated)"@en ;
+	rdfs:comment "AI-generated extension concepts for the CASE Investigation namespace, created for Project VIC's Autopsy-Rust project. These extensions add hypothesis testing, structured findings (including negative/exculpatory findings), and search constraint modeling to improve explainability of digital forensic investigations. Autopsy-Rust does NOT assert account-to-human ownership; these concepts support post-processing hypothesis testing workflows."@en ;
+	owl:imports
+		investigation:1.4.0 ,
+		uco-action:1.4.0 ,
+		uco-core:1.4.0
+		;
+	owl:versionIRI investigation_ai_ext:1.0.0 ;
+	.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Classes
+# ═══════════════════════════════════════════════════════════════════════════════
+
+investigation_ai_ext:Hypothesis
+	a owl:Class ;
+	rdfs:subClassOf uco-core:UcoObject ;
+	rdfs:label "Hypothesis"@en ;
+	rdfs:comment "A testable statement formulated during post-processing of digital forensic evidence. A hypothesis proposes a relationship between observed evidence and a digital account or activity pattern (e.g., 'DigitalAccount with SID S-1-5-21-...-1001 performed web browsing activity between 2025-01-10T08:00:00Z and 2025-01-10T12:00:00Z'). Hypotheses are tested by HypothesisTestActions and may produce Findings. Generated for Project VIC's Autopsy-Rust project."@en ;
+	.
+
+investigation_ai_ext:HypothesisTestAction
+	a owl:Class ;
+	rdfs:subClassOf investigation:InvestigativeAction ;
+	rdfs:label "Hypothesis Test Action"@en ;
+	rdfs:comment "An investigative action performed during post-processing to test a specific hypothesis against digital forensic evidence. This is distinct from ingest or export actions performed by Autopsy-Rust during evidence processing. A HypothesisTestAction documents the method, tools, constraints, and outcome of hypothesis testing. Generated for Project VIC's Autopsy-Rust project."@en ;
+	.
+
+investigation_ai_ext:Finding
+	a owl:Class ;
+	rdfs:subClassOf uco-core:UcoObject ;
+	rdfs:label "Finding"@en ;
+	rdfs:comment "A structured outcome produced by an investigative action or hypothesis test. A finding documents what was (or was not) observed, may reference supporting evidence objects, and carries a polarity indicating whether it supports inculpatory, exculpatory, or neutral interpretations. Generated for Project VIC's Autopsy-Rust project."@en ;
+	.
+
+investigation_ai_ext:NegativeFinding
+	a owl:Class ;
+	rdfs:subClassOf investigation_ai_ext:Finding ;
+	rdfs:label "Negative Finding"@en ;
+	rdfs:comment "A finding explicitly documenting that expected evidence was NOT observed under the documented constraints and methods. Negative findings are critical for explainability in digital forensics: they allow examiners and fact-finders to distinguish between 'no evidence was found' and 'no evidence was looked for.' A NegativeFinding must reference at least one SearchConstraint to document the scope under which the absence was determined. Generated for Project VIC's Autopsy-Rust project."@en ;
+	.
+
+investigation_ai_ext:SearchConstraint
+	a owl:Class ;
+	rdfs:subClassOf uco-core:UcoObject ;
+	rdfs:label "Search Constraint"@en ;
+	rdfs:comment "A documented constraint on an evidence search or hypothesis test, including scope (which data sources, artifact types, or file paths were included), time window, query strings or patterns used, and tool/module configuration. SearchConstraints enable explainability of both positive and negative findings by making the boundaries of the search explicit. Generated for Project VIC's Autopsy-Rust project."@en ;
+	.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Object Properties
+# ═══════════════════════════════════════════════════════════════════════════════
+
+investigation_ai_ext:testsHypothesis
+	a owl:ObjectProperty ;
+	rdfs:label "testsHypothesis"@en ;
+	rdfs:comment "Links a HypothesisTestAction to the Hypothesis it tests."@en ;
+	rdfs:domain investigation_ai_ext:HypothesisTestAction ;
+	rdfs:range investigation_ai_ext:Hypothesis ;
+	.
+
+investigation_ai_ext:producedFinding
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf uco-action:result ;
+	rdfs:label "producedFinding"@en ;
+	rdfs:comment "Links an investigative action to a Finding it produced (including NegativeFindings). This is a subproperty of uco-action:result, specializing the result to structured findings."@en ;
+	rdfs:domain investigation:InvestigativeAction ;
+	rdfs:range investigation_ai_ext:Finding ;
+	.
+
+investigation_ai_ext:supportedBy
+	a owl:ObjectProperty ;
+	rdfs:label "supportedBy"@en ;
+	rdfs:comment "Links a Finding to supporting evidence objects or actions (e.g., registry keys, event records, memory-derived processes, extraction actions, files). Multiple supportedBy links document the full evidence chain."@en ;
+	rdfs:domain investigation_ai_ext:Finding ;
+	rdfs:range uco-core:UcoObject ;
+	.
+
+investigation_ai_ext:underConstraint
+	a owl:ObjectProperty ;
+	rdfs:label "underConstraint"@en ;
+	rdfs:comment "Links a Finding or HypothesisTestAction to the documented SearchConstraints under which it was produced or performed."@en ;
+	rdfs:domain uco-core:UcoObject ;
+	rdfs:range investigation_ai_ext:SearchConstraint ;
+	.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Datatype Properties
+# ═══════════════════════════════════════════════════════════════════════════════
+
+investigation_ai_ext:polarity
+	a owl:DatatypeProperty ;
+	rdfs:label "polarity"@en ;
+	rdfs:comment "Indicates whether a finding supports an inculpatory, exculpatory, or neutral interpretation in the context of the tested hypothesis. Recommended values: 'inculpatory', 'exculpatory', 'neutral'."@en ;
+	rdfs:domain investigation_ai_ext:Finding ;
+	rdfs:range xsd:string ;
+	.
+
+investigation_ai_ext:findingPolarity
+	a owl:DatatypeProperty ;
+	rdfs:subPropertyOf investigation_ai_ext:polarity ;
+	rdfs:label "findingPolarity"@en ;
+	rdfs:comment "Compatibility alias for polarity used by some exporters; semantically equivalent to investigation_ai_ext:polarity."@en ;
+	rdfs:domain investigation_ai_ext:Finding ;
+	rdfs:range xsd:string ;
+	.
+
+investigation_ai_ext:confidenceNote
+	a owl:DatatypeProperty ;
+	rdfs:label "confidenceNote"@en ;
+	rdfs:comment "A narrative statement describing the confidence level and any limitations of a finding. Avoids forcing numeric probability; instead allows examiners to express uncertainty, caveats, and contextual factors in natural language."@en ;
+	rdfs:domain investigation_ai_ext:Finding ;
+	rdfs:range xsd:string ;
+	.
+
+investigation_ai_ext:hypothesisStatement
+	a owl:DatatypeProperty ;
+	rdfs:label "hypothesisStatement"@en ;
+	rdfs:comment "The textual statement of the hypothesis being tested."@en ;
+	rdfs:domain investigation_ai_ext:Hypothesis ;
+	rdfs:range xsd:string ;
+	.
+
+investigation_ai_ext:hypothesisScope
+	a owl:DatatypeProperty ;
+	rdfs:label "hypothesisScope"@en ;
+	rdfs:comment "A summary of the scope or context in which the hypothesis applies (e.g., 'Windows 10 workstation image acquired 2025-02-01')."@en ;
+	rdfs:domain investigation_ai_ext:Hypothesis ;
+	rdfs:range xsd:string ;
+	.
+
+investigation_ai_ext:constraintScope
+	a owl:DatatypeProperty ;
+	rdfs:label "constraintScope"@en ;
+	rdfs:comment "Describes the scope of data sources, artifact types, or file paths included in or excluded from the search."@en ;
+	rdfs:domain investigation_ai_ext:SearchConstraint ;
+	rdfs:range xsd:string ;
+	.
+
+investigation_ai_ext:constraintStartTime
+	a owl:DatatypeProperty ;
+	rdfs:label "constraintStartTime"@en ;
+	rdfs:comment "The start of the time window constraint for the search."@en ;
+	rdfs:domain investigation_ai_ext:SearchConstraint ;
+	rdfs:range xsd:dateTime ;
+	.
+
+investigation_ai_ext:constraintEndTime
+	a owl:DatatypeProperty ;
+	rdfs:label "constraintEndTime"@en ;
+	rdfs:comment "The end of the time window constraint for the search."@en ;
+	rdfs:domain investigation_ai_ext:SearchConstraint ;
+	rdfs:range xsd:dateTime ;
+	.
+
+investigation_ai_ext:constraintQuery
+	a owl:DatatypeProperty ;
+	rdfs:label "constraintQuery"@en ;
+	rdfs:comment "The query string, pattern, or keyword used in the search."@en ;
+	rdfs:domain investigation_ai_ext:SearchConstraint ;
+	rdfs:range xsd:string ;
+	.
+
+investigation_ai_ext:constraintConfiguration
+	a owl:DatatypeProperty ;
+	rdfs:label "constraintConfiguration"@en ;
+	rdfs:comment "A description or JSON representation of tool/module configuration settings used during the search."@en ;
+	rdfs:domain investigation_ai_ext:SearchConstraint ;
+	rdfs:range xsd:string ;
+	.

@@ -1,0 +1,92 @@
+@prefix investigation_ai_ext: <https://ontology.caseontology.org/case/investigation-ai-ext/> .
+@prefix investigation: <https://ontology.caseontology.org/case/investigation/> .
+@prefix kb: <http://example.org/kb#> .
+@prefix uco-action: <https://ontology.unifiedcyberontology.org/uco/action/> .
+@prefix uco-core: <https://ontology.unifiedcyberontology.org/uco/core/> .
+@prefix uco-role: <https://ontology.unifiedcyberontology.org/uco/role/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Exemplar (A-Box) for investigation-ai-ext in the context of a CASE Investigation.
+# Uses investigation:Investigation, investigation:Investigator, investigation:ProvenanceRecord
+# from the CASE ontology. CDO Playground: use with ontology/investigation-ai-ext.ttl and investigation-ai-ext-shapes.ttl.
+# String literals use xsd:string for SHACL sh:datatype xsd:string. Reference: CDO-Playground-Instructions.md.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CASE Investigation (context for all hypothesis-testing content)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+kb:f1000001-0001-4000-8000-000000000001
+	a investigation:Investigation ;
+	uco-core:name "Digital account activity hypothesis test"^^xsd:string ;
+	uco-core:description "Post-processing hypothesis test for web browsing activity of account S-1-5-21-...-1001 within a defined time window."^^xsd:string ;
+	investigation:focus "Account activity and browser artifacts"^^xsd:string ;
+	investigation:investigationForm "case" ;
+	investigation:investigationStatus "open"^^xsd:string ;
+	uco-core:startTime "2025-01-10T00:00:00Z"^^xsd:dateTime ;
+	uco-core:endTime "2026-02-25T10:00:00Z"^^xsd:dateTime ;
+	uco-core:object kb:a1b2c3d4-e5f6-4890-abcd-ef1234567890 ,
+		kb:b2c3d4e5-f6a7-4901-bcde-446655440000 ,
+		kb:c3d4e5f6-a7b8-4012-cdef-123456789012 ,
+		kb:d4e5f6a7-b8c9-0123-def0-234567890123 ,
+		kb:e5f6a7b8-c9d0-1234-ef01-234567890124 ,
+		kb:e2000002-0002-4000-8000-000000000002 .
+
+# Investigator role (CASE ontology)
+kb:33000003-0003-4000-8000-000000000003
+	a investigation:Investigator ;
+	uco-core:name "Lead examiner"^^xsd:string .
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# investigation-ai-ext: Hypothesis, constraint, action, finding
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Hypothesis
+kb:a1b2c3d4-e5f6-4890-abcd-ef1234567890
+	a investigation_ai_ext:Hypothesis ;
+	investigation_ai_ext:hypothesisStatement "DigitalAccount with SID S-1-5-21-...-1001 performed web browsing activity between 2025-01-10T08:00:00Z and 2025-01-10T12:00:00Z"^^xsd:string ;
+	investigation_ai_ext:hypothesisScope "Windows 10 workstation image acquired 2025-02-01"^^xsd:string .
+
+# Search constraint under which the test was performed
+kb:b2c3d4e5-f6a7-4901-bcde-446655440000
+	a investigation_ai_ext:SearchConstraint ;
+	investigation_ai_ext:constraintScope "User profile and browser artifacts for account S-1-5-21-...-1001"^^xsd:string ;
+	investigation_ai_ext:constraintStartTime "2025-01-10T08:00:00Z"^^xsd:dateTime ;
+	investigation_ai_ext:constraintEndTime "2025-01-10T12:00:00Z"^^xsd:dateTime ;
+	investigation_ai_ext:constraintQuery "browser history; visited URLs"^^xsd:string ;
+	investigation_ai_ext:constraintConfiguration "{\"sources\": [\"browser_history\"]}"^^xsd:string .
+
+# Hypothesis test action (InvestigativeAction subclass; explicit uco-core:UcoObject for SHACL supportedBy)
+kb:c3d4e5f6-a7b8-4012-cdef-123456789012
+	a investigation_ai_ext:HypothesisTestAction , uco-core:UcoObject ;
+	uco-core:name "Hypothesis test: account browsing activity"^^xsd:string ;
+	investigation_ai_ext:testsHypothesis kb:a1b2c3d4-e5f6-4890-abcd-ef1234567890 ;
+	investigation_ai_ext:underConstraint kb:b2c3d4e5-f6a7-4901-bcde-446655440000 ;
+	investigation_ai_ext:producedFinding kb:d4e5f6a7-b8c9-0123-def0-234567890123 ,
+		kb:e5f6a7b8-c9d0-1234-ef01-234567890124 ;
+	uco-action:endTime "2026-02-25T10:00:00Z"^^xsd:dateTime ;
+	uco-action:result kb:d4e5f6a7-b8c9-0123-def0-234567890123 ,
+		kb:e2000002-0002-4000-8000-000000000002 .
+
+# Finding (positive finding supporting the hypothesis)
+kb:d4e5f6a7-b8c9-0123-def0-234567890123
+	a investigation_ai_ext:Finding ;
+	investigation_ai_ext:polarity "inculpatory"^^xsd:string ;
+	investigation_ai_ext:findingPolarity "inculpatory"^^xsd:string ;
+	investigation_ai_ext:confidenceNote "High confidence; browser artifacts were present and within the stated time window."^^xsd:string ;
+	investigation_ai_ext:supportedBy kb:c3d4e5f6-a7b8-4012-cdef-123456789012 ;
+	investigation_ai_ext:underConstraint kb:b2c3d4e5-f6a7-4901-bcde-446655440000 .
+
+# NegativeFinding (for CDO Playground exemplar coverage: every profile class must have an instance)
+kb:e5f6a7b8-c9d0-1234-ef01-234567890124
+	a investigation_ai_ext:NegativeFinding ;
+	investigation_ai_ext:polarity "exculpatory"^^xsd:string ;
+	investigation_ai_ext:confidenceNote "No browser history entries found in the constrained scope."^^xsd:string ;
+	investigation_ai_ext:supportedBy kb:c3d4e5f6-a7b8-4012-cdef-123456789012 ;
+	investigation_ai_ext:underConstraint kb:b2c3d4e5-f6a7-4901-bcde-446655440000 .
+
+# Provenance record (CASE ontology) linking the hypothesis-test action to its finding
+kb:e2000002-0002-4000-8000-000000000002
+	a investigation:ProvenanceRecord ;
+	investigation:exhibitNumber "1"^^xsd:string ;
+	investigation:rootExhibitNumber "1"^^xsd:string ;
+	uco-core:object kb:d4e5f6a7-b8c9-0123-def0-234567890123 .

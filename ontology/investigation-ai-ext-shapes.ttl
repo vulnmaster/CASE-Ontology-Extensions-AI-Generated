@@ -1,0 +1,120 @@
+# SHACL shapes for investigation-ai-ext. OWL definitions in investigation-ai-ext.ttl.
+# CDO Playground: separate shapes file for testing (see CDO-Playground-Instructions.md).
+
+@prefix investigation_ai_ext: <https://ontology.caseontology.org/case/investigation-ai-ext/> .
+@prefix investigation: <https://ontology.caseontology.org/case/investigation/> .
+@prefix uco-core: <https://ontology.unifiedcyberontology.org/uco/core/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+investigation_ai_ext:HypothesisShape
+	a sh:NodeShape ;
+	sh:targetClass investigation_ai_ext:Hypothesis ;
+	sh:property
+		[
+			sh:path investigation_ai_ext:hypothesisStatement ;
+			sh:datatype xsd:string ;
+			sh:maxCount 1 ;
+			sh:nodeKind sh:Literal ;
+		] ,
+		[
+			sh:path investigation_ai_ext:hypothesisScope ;
+			sh:datatype xsd:string ;
+			sh:maxCount 1 ;
+			sh:nodeKind sh:Literal ;
+		] ;
+	.
+
+investigation_ai_ext:HypothesisTestActionShape
+	a sh:NodeShape ;
+	sh:targetClass investigation_ai_ext:HypothesisTestAction ;
+	sh:property
+		[
+			sh:path investigation_ai_ext:testsHypothesis ;
+			sh:class investigation_ai_ext:Hypothesis ;
+			sh:minCount 1 ;
+			sh:nodeKind sh:BlankNodeOrIRI ;
+		] ,
+		[
+			sh:path investigation_ai_ext:underConstraint ;
+			sh:class investigation_ai_ext:SearchConstraint ;
+			sh:nodeKind sh:BlankNodeOrIRI ;
+		] ;
+	.
+
+investigation_ai_ext:FindingShape
+	a sh:NodeShape ;
+	sh:targetClass investigation_ai_ext:Finding ;
+	sh:property
+		[
+			sh:path investigation_ai_ext:polarity ;
+			sh:datatype xsd:string ;
+			sh:maxCount 1 ;
+			sh:nodeKind sh:Literal ;
+		] ,
+		[
+			sh:path investigation_ai_ext:confidenceNote ;
+			sh:datatype xsd:string ;
+			sh:maxCount 1 ;
+			sh:nodeKind sh:Literal ;
+		] ,
+		[
+			sh:path investigation_ai_ext:supportedBy ;
+			sh:class uco-core:UcoObject ;
+			sh:nodeKind sh:BlankNodeOrIRI ;
+		] ,
+		[
+			sh:path investigation_ai_ext:underConstraint ;
+			sh:class investigation_ai_ext:SearchConstraint ;
+			sh:nodeKind sh:BlankNodeOrIRI ;
+		] ;
+	.
+
+investigation_ai_ext:NegativeFindingShape
+	a sh:NodeShape ;
+	sh:targetClass investigation_ai_ext:NegativeFinding ;
+	sh:property
+		[
+			sh:path investigation_ai_ext:underConstraint ;
+			sh:class investigation_ai_ext:SearchConstraint ;
+			sh:minCount 1 ;
+			sh:nodeKind sh:BlankNodeOrIRI ;
+		] ;
+	.
+
+investigation_ai_ext:SearchConstraintShape
+	a sh:NodeShape ;
+	sh:targetClass investigation_ai_ext:SearchConstraint ;
+	sh:property
+		[
+			sh:path investigation_ai_ext:constraintScope ;
+			sh:datatype xsd:string ;
+			sh:maxCount 1 ;
+			sh:nodeKind sh:Literal ;
+		] ,
+		[
+			sh:path investigation_ai_ext:constraintStartTime ;
+			sh:datatype xsd:dateTime ;
+			sh:maxCount 1 ;
+			sh:nodeKind sh:Literal ;
+		] ,
+		[
+			sh:path investigation_ai_ext:constraintEndTime ;
+			sh:datatype xsd:dateTime ;
+			sh:maxCount 1 ;
+			sh:nodeKind sh:Literal ;
+		] ,
+		[
+			sh:path investigation_ai_ext:constraintQuery ;
+			sh:datatype xsd:string ;
+			sh:nodeKind sh:Literal ;
+		] ,
+		[
+			sh:path investigation_ai_ext:constraintConfiguration ;
+			sh:datatype xsd:string ;
+			sh:maxCount 1 ;
+			sh:nodeKind sh:Literal ;
+		] ;
+	.
