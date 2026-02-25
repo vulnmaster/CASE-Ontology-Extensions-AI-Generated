@@ -86,6 +86,19 @@ These extensions have been aligned with the [CDO Community Playground](https://g
 - OWL and SHACL are separated: ontology in `ontology/investigation-ai-ext.ttl`, shapes in `ontology/investigation-ai-ext-shapes.ttl`.
 - Exemplar A-Box with UUID-based IRIs: `exemplars/investigation-ai-ext-exemplar.ttl`.
 
+## Validation
+
+**Validated with case_validate** (pass the extension ontology so extension classes are recognized):
+
+```bash
+# investigation-ai-ext exemplar (run from this repo root)
+case_validate --built-version case-1.4.0 \
+  --ontology-graph ontology/investigation-ai-ext.ttl \
+  exemplars/investigation-ai-ext-exemplar.ttl
+```
+
+The CASE typo-checker looks for IRIs under `https://ontology.unifiedcyberontology.org/`; the investigation extension uses `https://ontology.caseontology.org/case/investigation-ai-ext/`, so it is not treated as UCO. For full SHACL validation, use the CASE-Profile-Example workflow (`make -j check` after injecting ontology, shapes, and exemplar per `CDO-Playground-Testing.md`).
+
 ## License
 
 Apache-2.0
