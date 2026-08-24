@@ -72,6 +72,7 @@ The `producedFinding` property (subPropertyOf `uco-action:result`) links `Invest
 
 - **Base ontology:** CASE v1.4.0 / UCO v1.4.0
 - **Import chain:** `investigation-ai-ext` imports `case/investigation/1.4.0`, `uco/action/1.4.0`, and `uco/core/1.4.0`
+- Live official CASE/UCO is 1.5.0. This repository still documents and imports 1.4.0. It has not been retargeted.
 - These extensions are additive and do not modify or conflict with base CASE/UCO terms
 
 ## Origin
